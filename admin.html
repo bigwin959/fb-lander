@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin — Cricket Corner BD Leads</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #080e14;
+      color: #c0d8c5;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 28px 16px 60px;
+    }
+
+    header {
+      border-bottom: 1px solid rgba(26,122,54,0.25);
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+    }
+
+    h1 { color: #2ecc71; font-size: 1.4rem; margin-bottom: 4px; }
+    .meta { color: #4a7e52; font-size: 0.8rem; }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    input[type="password"], select {
+      background: #0a130d;
+      border: 1.5px solid rgba(26,122,54,0.4);
+      border-radius: 8px;
+      color: #c0d8c5;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      padding: 9px 13px;
+      outline: none;
+    }
+    input[type="password"]:focus, select:focus { border-color: #1a7a36; }
+    input[type="password"] { width: 220px; }
+
+    .btn {
+      padding: 9px 20px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1a7a36, #c8102e);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.2s;
+    }
+    .btn:hover { filter: brightness(1.15); }
+
+    #status { color: #c8102e; font-size: 0.82rem; }
+
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .stat-chip {
+      background: rgba(26,122,54,0.12);
+      border: 1px solid rgba(26,122,54,0.25);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2ecc71;
+      display: none;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      min-width: 560px;
+    }
+
+    th {
+      background: #0d1f12;
+      color: #2ecc71;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(26,122,54,0.3);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(26,122,54,0.1);
+      vertical-align: top;
+      word-break: break-all;
+    }
+
+    tr:hover td { background: rgba(26,122,54,0.06); }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .badge.email    { background: rgba(6,182,212,0.15); color: #06b6d4; }
+    .badge.other    { background: rgba(200,16,46,0.15); color: #c8102e; }
+
+    .del-btn {
+      background: rgba(200,16,46,0.15);
+      color: #c8102e;
+      border: 1px solid rgba(200,16,46,0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .del-btn:hover { background: rgba(200,16,46,0.35); }
+
+    .pager {
+      display: none;
+      gap: 10px;
+      margin-top: 18px;
+      align-items: center;
+      color: #4a7e52;
+      font-size: 0.82rem;
+    }
+    .pager .btn { padding: 6px 16px; font-size: 0.8rem; }
+
+    .empty {
+      text-align: center;
+      color: #3d6645;
+      padding: 48px 20px;
+      font-size: 0.9rem;
+    }
+
+    .export-btn {
+      margin-left: auto;
+      background: rgba(6,182,212,0.15);
+      border: 1px solid rgba(6,182,212,0.35);
+      color: #06b6d4;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+    .export-btn:hover { background: rgba(6,182,212,0.28); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🏏 Cricket Corner BD — Lead Dashboard</h1>
+    <p class="meta">Admin-only view · Keep this URL private.</p>
+  </header>
+
+  <div class="toolbar">
+    <input type="password" id="secretInput" placeholder="Enter admin secret key…"/>
+    <select id="typeFilter">
+      <option value="">All types</option>
+      <option value="email">Email</option>
+      <option value="other">Other</option>
+    </select>
+    <button class="btn" onclick="loadLeads(1)">🔍 Load / Refresh</button>
+    <span id="status"></span>
+    <button class="export-btn" id="exportBtn" onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+
+  <div class="stats-row">
+    <span class="stat-chip" id="chip-total"></span>
+    <span class="stat-chip" id="chip-email" style="color:#06b6d4;border-color:rgba(6,182,212,0.25);background:rgba(6,182,212,0.1)"></span>
+    <span class="stat-chip" id="chip-other" style="color:#c8102e;border-color:rgba(200,16,46,0.25);background:rgba(200,16,46,0.1)"></span>
+  </div>
+
+  <div class="table-wrap" id="tableWrap"></div>
+
+  <div class="pager" id="pager">
+    <button class="btn" onclick="prevPage()">← Prev</button>
+    <span id="pageInfo"></span>
+    <button class="btn" onclick="nextPage()">Next →</button>
+  </div>
+
+  <script>
+    // ── Point to your Express backend ──
+    // Change this URL when you deploy your backend elsewhere
+    const API_BASE = window.location.hostname === 'localhost'
+      ? ''
+      : 'https://fb-lander.onrender.com';
+
+    let currentPage = 1;
+    let totalPages  = 1;
+    let allLeads    = [];
+
+    function getSecret() {
+      return document.getElementById('secretInput').value.trim();
+    }
+
+    async function loadLeads(page) {
+      page = page || 1;
+      currentPage = page;
+
+      const secret  = getSecret();
+      const type    = document.getElementById('typeFilter').value;
+      const status  = document.getElementById('status');
+
+      if (!secret) {
+        status.textContent = '⚠️ Please enter the admin secret key.';
+        return;
+      }
+
+      status.textContent = '⏳ Loading…';
+
+      try {
+        const url = API_BASE + '/api/leads'
+          + '?secret=' + encodeURIComponent(secret)
+          + '&page='   + page
+          + '&limit=50'
+          + (type ? '&type=' + encodeURIComponent(type) : '');
+
+        const res  = await fetch(url);
+        const data = await res.json();
+
+        if (!data.success) {
+          status.textContent = '❌ ' + data.message;
+          document.getElementById('tableWrap').innerHTML = '';
+          document.getElementById('pager').style.display = 'none';
+          return;
+        }
+
+        status.textContent = '';
+        totalPages = data.pages || 1;
+        allLeads   = data.leads;
+
+        // Update stat chips
+        updateChip('chip-total',    '📋 ' + data.total + ' total');
+        loadTypeCounts(secret);
+
+        // Pager
+        const pager = document.getElementById('pager');
+        pager.style.display    = data.total > 50 ? 'flex' : 'none';
+        document.getElementById('pageInfo').textContent = 'Page ' + data.page + ' / ' + data.pages;
+
+        // Export button
+        const expBtn = document.getElementById('exportBtn');
+        expBtn.style.display = data.total > 0 ? 'inline-block' : 'none';
+
+        renderTable(data.leads, page);
+
+      } catch (err) {
+        status.textContent = '❌ Network error — is the server running?';
+      }
+    }
+
+    async function loadTypeCounts(secret) {
+      const types = ['email', 'other'];
+      const icons = { email: '📧', other: '❓' };
+      for (const t of types) {
+        try {
+          const r = await fetch(API_BASE + '/api/leads?secret=' + encodeURIComponent(secret) + '&type=' + t + '&limit=1');
+          const d = await r.json();
+          if (d.success) updateChip('chip-' + t, icons[t] + ' ' + d.total + ' ' + t);
+        } catch (_) {}
+      }
+    }
+
+    function updateChip(id, text) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent     = text;
+      el.style.display   = 'inline-block';
+    }
+
+    function renderTable(leads, page) {
+      if (!leads || leads.length === 0) {
+        document.getElementById('tableWrap').innerHTML = '<p class="empty">No leads found. Try a different filter or submit some data first.</p>';
+        return;
+      }
+
+      let rows = '';
+      leads.forEach(function(l, i) {
+        const num  = (page - 1) * 50 + i + 1;
+        const date = new Date(l.createdAt).toLocaleString();
+        rows += '<tr>'
+          + '<td>' + num + '</td>'
+          + '<td><strong>' + esc(l.contact) + '</strong></td>'
+          + '<td><span class="badge ' + esc(l.contactType) + '">' + esc(l.contactType) + '</span></td>'
+          + '<td>' + esc(l.ip) + '</td>'
+          + '<td style="white-space:nowrap">' + date + '</td>'
+          + '<td><button class="del-btn" data-id="' + esc(l._id) + '" onclick="deleteLead(this)">✕ Delete</button></td>'
+          + '</tr>';
+      });
+
+      document.getElementById('tableWrap').innerHTML =
+        '<table>'
+        + '<thead><tr><th>#</th><th>Contact</th><th>Type</th><th>IP</th><th>Submitted</th><th></th></tr></thead>'
+        + '<tbody>' + rows + '</tbody>'
+        + '</table>';
+    }
+
+    async function deleteLead(btn) {
+      if (!confirm('Delete this lead?')) return;
+      const id     = btn.getAttribute('data-id');
+      const secret = getSecret();
+      try {
+        const res  = await fetch(API_BASE + '/api/leads/' + id + '?secret=' + encodeURIComponent(secret), { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) loadLeads(currentPage);
+        else alert('Error: ' + data.message);
+      } catch (e) {
+        alert('Network error.');
+      }
+    }
+
+    function exportCSV() {
+      if (!allLeads.length) return;
+      const header = ['#', 'Contact', 'Type', 'IP', 'User Agent', 'Submitted At'];
+      const rows   = allLeads.map(function(l, i) {
+        return [
+          i + 1,
+          '"' + l.contact.replace(/"/g, '""') + '"',
+          l.contactType,
+          l.ip,
+          '"' + (l.userAgent || '').replace(/"/g, '""') + '"',
+          new Date(l.createdAt).toISOString()
+        ].join(',');
+      });
+      const csv  = [header.join(','), ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'leads_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function prevPage() { if (currentPage > 1) loadLeads(currentPage - 1); }
+    function nextPage() { if (currentPage < totalPages) loadLeads(currentPage + 1); }
+
+    function esc(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Allow pressing Enter in the secret field
+    document.getElementById('secretInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') loadLeads(1);
+    });
+  </script>
+
+</body>
+</html>

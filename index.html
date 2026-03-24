@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cricket Corner BD — Free Forecast Access</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: #080e14;
+      font-family: 'Inter', sans-serif;
+      color: #e8f0e9;
+    }
+
+    /* ══════════════════════════════════════════
+       PAGE WRAPPER — single centered column
+    ══════════════════════════════════════════ */
+    .page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 0 48px;
+    }
+
+    /* ══════════════════════════════════════════
+       16:9 BANNER IMAGE
+    ══════════════════════════════════════════ */
+    .banner-wrap {
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      /* subtle green glow at bottom to blend into content */
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
+    }
+
+    .banner-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+
+    /* bottom fade so image blends into dark page */
+    .banner-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(8, 14, 20, 0.6) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════
+       CONTENT CARD — sits tight below the image
+    ══════════════════════════════════════════ */
+    .content-card {
+      width: 100%;
+      max-width: 560px;
+      background: #0d1a10;
+      border: 1px solid rgba(26, 122, 54, 0.22);
+      border-top: none;
+      border-radius: 0 0 20px 20px;
+    }
+
+    /* ── Headline section ── */
+    .headline-block {
+      padding: 20px 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(26, 122, 54, 0.15);
+    }
+
+    .headline-block h1 {
+      font-size: clamp(1.25rem, 5vw, 1.65rem);
+      font-weight: 900;
+      line-height: 1.2;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .headline-block h1 .accent {
+      background: linear-gradient(90deg, #2ecc71, #e8b900);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Benefits strip ── */
+    .benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-bottom: 1px solid rgba(26, 122, 54, 0.15);
+    }
+
+    .benefit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 20px;
+      border-bottom: 1px solid rgba(26, 122, 54, 0.08);
+    }
+
+    .benefit-row:last-child {
+      border-bottom: none;
+    }
+
+    .benefit-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+    }
+
+    .benefit-row strong {
+      font-size: clamp(0.82rem, 3.5vw, 0.9rem);
+      font-weight: 700;
+      color: #e8f5e9;
+    }
+
+    .benefit-row span {
+      font-size: clamp(0.72rem, 3vw, 0.78rem);
+      color: #6aad78;
+      margin-left: 6px;
+      font-weight: 400;
+    }
+
+    /* ── CTA section ── */
+
+    .cta-block {
+      padding: 18px 20px 22px;
+    }
+
+    .cta-label {
+      font-size: clamp(0.7rem, 3vw, 0.75rem);
+      font-weight: 700;
+      color: #c8102e;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .input-field {
+      width: 100%;
+      background: #060f09;
+      border: 1.5px solid rgba(26, 122, 54, 0.4);
+      border-radius: 12px;
+      color: #c0d8c5;
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.88rem, 3.5vw, 0.95rem);
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 10px;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .input-field::placeholder {
+      color: #3a5e42;
+    }
+
+    .input-field:focus {
+      border-color: #1a7a36;
+      box-shadow: 0 0 0 3px rgba(26, 122, 54, 0.18);
+    }
+
+    .btn-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #c8102e 0%, #8b0000 55%, #1a7a36 100%);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.88rem, 3.8vw, 1rem);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow:
+        0 8px 24px rgba(200, 16, 46, 0.45),
+        0 2px 6px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      animation: pulse-glow 2.5s ease-in-out infinite;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-cta:hover, .btn-cta:focus {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow:
+        0 14px 36px rgba(200, 16, 46, 0.6),
+        0 4px 10px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      animation: none;
+    }
+
+    .btn-cta:active {
+      transform: scale(0.98);
+      filter: brightness(0.95);
+      animation: none;
+    }
+
+    .btn-cta svg { flex-shrink: 0; }
+
+    .cta-note {
+      text-align: center;
+      font-size: clamp(0.65rem, 2.8vw, 0.72rem);
+      color: #3d5e44;
+      margin-top: 9px;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow:
+          0 8px 24px rgba(200, 16, 46, 0.45),
+          0 2px 6px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+      50% {
+        box-shadow:
+          0 8px 36px rgba(200, 16, 46, 0.75),
+          0 2px 6px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — wider screens get centered card
+    ══════════════════════════════════════════ */
+    /* ══════════════════════════════════════════
+       TOP LOGO BAR
+    ══════════════════════════════════════════ */
+    .logo-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(8, 14, 20, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(26, 122, 54, 0.18);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-bar img.logo {
+      height: 40px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Fallback shown when logo.png is missing */
+    .logo-bar .logo-fallback {
+      display: none;
+      height: 40px;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .logo-bar .logo-fallback .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2ecc71, #c8102e);
+    }
+
+    /* Show fallback text if logo image fails to load */
+    .logo-bar img.logo.broken { display: none; }
+    .logo-bar img.logo.broken ~ .logo-fallback { display: flex; }
+
+    @media (min-width: 560px) {
+      .page {
+        padding: 0 16px 60px;
+      }
+
+      .banner-wrap {
+        border-radius: 20px 20px 0 0;
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.7),
+          0 0 0 1px rgba(26, 122, 54, 0.2);
+      }
+
+      .logo-bar {
+        padding: 12px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ── Logo Bar ── -->
+  <div class="logo-bar">
+    <img
+      class="logo"
+      src="logo.png"
+      alt="Cricket Corner BD"
+      onerror="this.classList.add('broken')"
+    />
+    <div class="logo-fallback">
+      <div class="dot"></div>
+      Cricket Corner BD
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- ── 16:9 Banner Image ── -->
+    <div class="banner-wrap">
+      <img src="image.png" alt="Exclusive Pitch Analysis & Team Forecast Data" />
+    </div>
+
+    <!-- ── Content Card (immediately below image, no gap) ── -->
+    <div class="content-card">
+
+      <!-- Headline -->
+      <div class="headline-block">
+        <h1><span class="accent">Stop guessing.</span> Start dominating.</h1>
+      </div>
+
+      <!-- Benefits -->
+      <div class="benefits">
+        <div class="benefit-row">
+          <div class="benefit-icon">✅</div>
+          <div>
+            <strong>Data-Driven Insights</strong>
+            <span>— We analyze the stats so you don't have to.</span>
+          </div>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-icon">✅</div>
+          <div>
+            <strong>Real-Time Updates</strong>
+            <span>— Injury reports and weather conditions that matter.</span>
+          </div>
+        </div>
+        <div class="benefit-row">
+          <div class="benefit-icon">✅</div>
+          <div>
+            <strong>Zero Cost Access <span style="color:#c8102e;">(Limited Time)</span></strong>
+            <span>— Secure your spot before the finals.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <p class="cta-label">Free Sport Forecast Access</p>
+
+        <input
+          type="email"
+          id="contactInput"
+          class="input-field"
+          placeholder="Enter your email address..."
+          autocomplete="off"
+          inputmode="email"
+        />
+        <button class="btn-cta" id="ctaBtn" onclick="handleCTA()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2L11 13"/>
+            <path d="M22 2L15 22 11 13 2 9l20-7z"/>
+          </svg>
+          Send Me The Data
+        </button>
+        <p class="cta-note">🔒 Secure & Private. Cancel anytime. 100% free, limited spots available.</p>
+      </div>
+
+    </div><!-- /content-card -->
+
+  </div><!-- /page -->
+
+  <script>
+    const ctaBtn   = document.getElementById('ctaBtn');
+    const API_BASE = 'https://fb-lander.onrender.com';
+
+    async function handleCTA() {
+      const input = document.getElementById('contactInput');
+      const val   = input.value.trim();
+
+      if (!val) {
+        input.focus();
+        input.style.borderColor = '#c8102e';
+        input.style.boxShadow   = '0 0 0 3px rgba(200,16,46,0.2)';
+        setTimeout(() => { input.style.borderColor = ''; input.style.boxShadow = ''; }, 1800);
+        return;
+      }
+
+      ctaBtn.disabled      = true;
+      ctaBtn.style.opacity = '0.7';
+      ctaBtn.style.animation = 'none';
+      ctaBtn.innerHTML     = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg> Sending…';
+
+      try {
+        const res  = await fetch(API_BASE + '/api/leads', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ contact: val, contactType: 'email' }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          ctaBtn.style.background = 'linear-gradient(135deg,#1a7a36,#145e2a)';
+          ctaBtn.style.opacity    = '1';
+          ctaBtn.innerHTML        = '✅ You\'re In! We\'ll reach you shortly.';
+          input.value             = '';
+          input.disabled          = true;
+          input.placeholder       = 'Submission received — thank you!';
+        } else {
+          ctaBtn.disabled      = false;
+          ctaBtn.style.opacity = '1';
+          ctaBtn.innerHTML     = '⚠️ ' + data.message + ' — Try Again';
+          setTimeout(resetBtn, 3000);
+        }
+      } catch (err) {
+        ctaBtn.disabled      = false;
+        ctaBtn.style.opacity = '1';
+        ctaBtn.innerHTML     = '⚠️ Network error — Try Again';
+        setTimeout(resetBtn, 3000);
+      }
+    }
+
+    function resetBtn() {
+      ctaBtn.disabled         = false;
+      ctaBtn.style.opacity    = '1';
+      ctaBtn.style.background = '';
+      ctaBtn.style.animation  = 'pulse-glow 2.5s ease-in-out infinite';
+      ctaBtn.innerHTML =
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg> Send Me The Data';
+    }
+
+    document.getElementById('contactInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleCTA();
+    });
+  </script>
+</body>
+</html>
