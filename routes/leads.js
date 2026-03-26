@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const Lead    = require('../models/Lead');
+const Lead    = require('../models/lead');
 
 // ─── Helper: detect contact type ────────────────────────────────────────────
 function detectContactType(value) {
