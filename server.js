@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const cors     = require('cors');
 const path     = require('path');
 
-const leadsRouter = require('./routes/leads');
+const leadsRouter   = require('./routes/leads');
+const leadsV2Router = require('./routes/leadsV2');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -20,10 +21,14 @@ app.use(express.static(path.join(__dirname)));
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
 app.use('/api/leads', leadsRouter);
+app.use('/api/leads-v2', leadsV2Router);
 
-// ─── Admin Dashboard → serve admin.html ──────────────────────────────────────
+// ─── Admin Dashboards ────────────────────────────────────────────────────────
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
+});
+app.get('/admin-v2', (req, res) => {
+  res.sendFile(path.join(__dirname, 'V2', 'admin.html'));
 });
 
 // ─── Connect to MongoDB & Start ───────────────────────────────────────────────

@@ -176,6 +176,11 @@
       <option value="email">Email</option>
       <option value="other">Other</option>
     </select>
+    <select id="sourceFilter">
+      <option value="">All sources</option>
+      <option value="cricket-lander">V1 — Cricket Lander</option>
+      <option value="insider-advantage">V2 — Insider's Advantage</option>
+    </select>
     <button class="btn" onclick="loadLeads(1)">🔍 Load / Refresh</button>
     <span id="status"></span>
     <button class="export-btn" id="exportBtn" onclick="exportCSV()">⬇ Export CSV</button>
@@ -226,11 +231,13 @@
       status.textContent = '⏳ Loading…';
 
       try {
+        const source = document.getElementById('sourceFilter').value;
         const url = API_BASE + '/api/leads'
           + '?secret=' + encodeURIComponent(secret)
           + '&page='   + page
           + '&limit=50'
-          + (type ? '&type=' + encodeURIComponent(type) : '');
+          + (type   ? '&type='   + encodeURIComponent(type)   : '')
+          + (source ? '&source=' + encodeURIComponent(source) : '');
 
         const res  = await fetch(url);
         const data = await res.json();
@@ -295,10 +302,12 @@
       leads.forEach(function(l, i) {
         const num  = (page - 1) * 50 + i + 1;
         const date = new Date(l.createdAt).toLocaleString();
+        const src  = l.source === 'insider-advantage' ? 'V2' : 'V1';
         rows += '<tr>'
           + '<td>' + num + '</td>'
           + '<td><strong>' + esc(l.contact) + '</strong></td>'
           + '<td><span class="badge ' + esc(l.contactType) + '">' + esc(l.contactType) + '</span></td>'
+          + '<td><span style="font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:20px;background:' + (src==='V2'?'rgba(251,191,36,0.15)':'rgba(46,204,113,0.15)') + ';color:' + (src==='V2'?'#fbbf24':'#2ecc71') + '">' + src + '</span></td>'
           + '<td>' + esc(l.ip) + '</td>'
           + '<td style="white-space:nowrap">' + date + '</td>'
           + '<td><button class="del-btn" data-id="' + esc(l._id) + '" onclick="deleteLead(this)">✕ Delete</button></td>'
@@ -307,7 +316,7 @@
 
       document.getElementById('tableWrap').innerHTML =
         '<table>'
-        + '<thead><tr><th>#</th><th>Contact</th><th>Type</th><th>IP</th><th>Submitted</th><th></th></tr></thead>'
+        + '<thead><tr><th>#</th><th>Contact</th><th>Type</th><th>Source</th><th>IP</th><th>Submitted</th><th></th></tr></thead>'
         + '<tbody>' + rows + '</tbody>'
         + '</table>';
     }

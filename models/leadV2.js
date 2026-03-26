@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const LeadSchema = new mongoose.Schema(
+const LeadV2Schema = new mongoose.Schema(
   {
     contact: {
       type: String,
@@ -20,19 +20,11 @@ const LeadSchema = new mongoose.Schema(
       type: String,
       default: 'unknown',
     },
-    page: {
-      type: String,
-      default: 'cricket-lander',
-    },
-    source: {
-      type: String,
-      enum: ['cricket-lander', 'insider-advantage'],
-      default: 'cricket-lander',
-    },
   },
   {
-    timestamps: true, // adds createdAt + updatedAt automatically
+    timestamps: true,
+    collection: 'leads_v2', // separate collection from V1
   }
 );
 
-module.exports = mongoose.model('Lead', LeadSchema);
+module.exports = mongoose.model('LeadV2', LeadV2Schema);
